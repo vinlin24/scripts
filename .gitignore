@@ -1,1 +1,6 @@
+# Throwaway test code
+/test.ps1
+
+# Productivity files
+.vscode/
 *.code-workspace
