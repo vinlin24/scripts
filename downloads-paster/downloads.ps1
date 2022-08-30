@@ -1,4 +1,6 @@
 # downloads.ps1
+# For use at the command line. Supports command line arguments and
+# prompts user for confirmation.
 
 # command line arguments: specify how recent files should be
 # args behavior determined by builtin New-Timespan
