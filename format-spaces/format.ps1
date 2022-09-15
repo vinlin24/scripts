@@ -40,7 +40,7 @@ if ($Register) {
     $commandPath = Join-Path $appPath "command"
     New-Item -Path $commandPath
     $__file__ = $MyInvocation.MyCommand.Path
-    $command = "powershell.exe -File $__file__ -WindowStyle Hidden"
+    $command = "powershell.exe -WindowStyle Hidden -File $__file__"
     New-ItemProperty -Path $commandPath -Name "(Default)" -Value $command
 
     Write-Host "Key points to the current location of this script: $__file__. If you move this script, be sure to run it with the -Register flag again!" -ForegroundColor Yellow
