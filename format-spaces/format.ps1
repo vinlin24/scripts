@@ -50,26 +50,29 @@ if ($Register) {
 
 <# Otherwise, run the main process #>
 
-# Delimiter used to separate words in final name
-$WORD_DELIMITER = "-"
+function Format-FileNames {
+    # Delimiter used to separate words in final name
+    $WORD_DELIMITER = "-"
 
-# Regex delimiters to detect and replace
-$TARGET_DELIMITERS = @("\s+", "_+")
+    # Regex delimiters to detect and replace
+    $TARGET_DELIMITERS = @("\s+", "_+")
 
-$files = Get-ChildItem -Path .
+    $files = Get-ChildItem -Path .
 
-$count = 0
-foreach ($file in $files) {
-    $oldName = $newName = $file.Name
-    foreach ($delimiter in $TARGET_DELIMITERS) {
-        $newName = $newName -replace $delimiter, $WORD_DELIMITER
+    $count = 0
+    foreach ($file in $files) {
+        $oldName = $newName = $file.Name
+        foreach ($delimiter in $TARGET_DELIMITERS) {
+            $newName = $newName -replace $delimiter, $WORD_DELIMITER
+        }
+        if ($newName -ne $oldName) {
+            Rename-Item $file $newName
+            Write-Host "Renamed: $oldname -> $newName."
+            $count++
+        }
     }
-    if ($newName -ne $oldName) {
-        Rename-Item $file $newName
-        Write-Host "Renamed: $oldname -> $newName."
-        $count++
-    }
+    Write-Host "DONE: Renamed $count item(s)."
 }
-Write-Host "DONE: Renamed $count item(s)."
 
+Format-FileNames
 exit 0
