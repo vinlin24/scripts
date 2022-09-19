@@ -1,9 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""update_readme.py
+r"""update_readme.py
 
-Script to run upon push. Updates the root README.md document to include
-links to the subdirectories.
+Script to run before a commit. Updates the root README.md document to
+include links to the subdirectories.
+
+Paste the following content into .git/hooks/pre-commit:
+
+#!C:/Progra~1/Git/usr/bin/sh.exe
+echo
+python ".\update_readme.py"
+if [ $? -eq 0 ]; then
+    echo "pre-commit: OK"
+    exit 0
+else
+    echo "pre-commit: FAIL"
+    exit 1
+fi
 """
 
 from pathlib import Path
