@@ -13,6 +13,7 @@ Check them out here:
 
 
 I also linked this repository to my
-[PowerShell profile script backup](PS-profile) since I thought it
-seemed relevant. There you can see the kind of convenience functions
-I've written to improve my own command line workflow!
+[PowerShell profile script backup](https://github.com/vinlin24/PS-profile)
+since I thought it seemed relevant. There you can see the kind of
+convenience functions I've written to improve my own command line
+workflow!
