@@ -7,7 +7,7 @@ your Windows workflow just a bit more convenient too!
 
 Check them out here:
 
-- [Format Spaces](desktop-shortcut)
+- [Desktop Shortcut](desktop-shortcut)
 - [Downloads Paster](downloads-paster)
 - [Format Spaces](format-spaces)
 
