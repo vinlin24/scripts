@@ -8,13 +8,14 @@ include links to the subdirectories.
 Paste the following content into .git/hooks/pre-commit:
 
 #!C:/Progra~1/Git/usr/bin/sh.exe
-echo
+# Update README.md
 python ".\update_readme.py"
 if [ $? -eq 0 ]; then
-    echo "pre-commit: OK"
-    exit 0
+    echo "pre-commit (README): OK"
+    # Stage the affected file in case it was updated
+    git add ".\README.md"
 else
-    echo "pre-commit: FAIL"
+    echo "pre-commit (README): FAIL"
     exit 1
 fi
 """
