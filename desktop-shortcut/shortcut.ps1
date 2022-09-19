@@ -20,37 +20,54 @@ param (
     [switch] $Register
 )
 
+$__file__ = $MyInvocation.MyCommand.Path
+
 <# Add script to registry if run with -Register switch #>
+
+function _register_at_path {
+    param (
+        [Parameter(Mandatory = $true)]
+        [string] $AppPath
+    )
+    # Create the container for the app
+    New-Item -Path $AppPath
+    New-ItemProperty -LiteralPath $AppPath -Name "(Default)" -Value "Add desktop shortcut"
+
+    # Create the command subkey pointed to this script
+    $commandPath = Join-Path $AppPath "command"
+    New-Item -Path $commandPath
+    # "%1" necessary to capture selected file
+    $command = "powershell.exe -WindowStyle Hidden -File $__file__ `"%1`""
+    New-ItemProperty -LiteralPath $commandPath -Name "(Default)" -Value $command
+}
 
 if ($Register) {
     # WARNING: Use -LiteralPath for any operations with paths containing *
-    $HKCU_PATH = "HKCU:\Software\Classes\*\shell\"
+    $HKCU_FILES_PATH = "HKCU:\Software\Classes\*\shell\"
+    $HKCU_DIR_PATH = "HKCU:\Software\Classes\Directory\shell\"
     
-    # Ask to overwrite the existing key if already exists
-    $appPath = Join-Path $HKCU_PATH "DesktopShortcut"
-    if (Test-Path -LiteralPath $appPath) {
+    # Ask to overwrite the existing keys if any already exist
+    $appFilesPath = Join-Path $HKCU_FILES_PATH "DesktopShortcut"
+    $appDirPath = Join-Path $HKCU_DIR_PATH "DesktopShortcut"
+    if ((Test-Path -LiteralPath $appFilesPath) -or (Test-Path -Path $appDirPath)) {
         Write-Host "desktop-shortcut is already registered in the registry. Would you like to overwrite it? (y/N) " -NoNewline -ForegroundColor Yellow
         $confirmation = Read-Host
         if ($confirmation -ne "y") {
             exit 0
         }
-        Remove-Item -LiteralPath $appPath -Recurse
+        try { Remove-Item -LiteralPath $appFilesPath -Recurse } catch {}
+        try { Remove-Item -Path $appDirPath -Recurse } catch {}
     }
 
-    # Create the container for the app
-    Write-Host "Adding desktop-shortcut to the registry..." -ForegroundColor Yellow
-    New-Item -Path $appPath
-    New-ItemProperty -LiteralPath $appPath -Name "(Default)" -Value "Add desktop shortcut"
+    # For context menu on FILES
+    Write-Host "Adding desktop-shortcut to the registry (FILES)..." -ForegroundColor Yellow
+    _register_at_path $appFilesPath
 
-    # Create the command subkey pointed to this script
-    $commandPath = Join-Path $appPath "command"
-    New-Item -Path $commandPath
-    $__file__ = $MyInvocation.MyCommand.Path
-    # "%1" necessary to capture selected file
-    $command = "powershell.exe -WindowStyle Hidden -File $__file__ `"%1`""
-    New-ItemProperty -LiteralPath $commandPath -Name "(Default)" -Value $command
+    # For context menu on DIRECTORIES
+    Write-Host "Adding desktop-shortcut to the registry (DIRECTORIES)..." -ForegroundColor Yellow
+    _register_at_path $appDirPath
 
-    Write-Host "Key points to the current location of this script: $__file__. If you move this script, be sure to run it with the -Register flag again!" -ForegroundColor Yellow
+    Write-Host "Keys points to the current location of this script: $__file__. If you move this script, be sure to run it with the -Register flag again!" -ForegroundColor Yellow
     Write-Host "Added desktop-shortcut to the registry." -ForegroundColor Green
     exit 0
 }
